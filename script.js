@@ -11,10 +11,15 @@ let fields = [
 ];
 
 let isCircleTurn = true;
+let currentPlayer = 'cross';
+let audio_draw = new Audio('audio/draw.mp3');
+let audio_end = new Audio('audio/end.mp3');
 
 function init() {
   render();
+  renderSymbols();
 }
+
 
 function render() {
   const contentDiv = document.getElementById('content');
@@ -25,7 +30,7 @@ function render() {
     for (let j = 0; j < 3; j++) {
       const index = i * 3 + j;
       const fieldValue = fields[index];
-      const symbol = fieldValue === 'circle' ? generateCircleSVG(index) : fieldValue === 'cross' ? generateCrossSVG(index) : '';
+      const symbol = fieldValue === 'circle' ? generateCircleSVG() : fieldValue === 'cross' ? generateCrossSVG() : '';
 
       tableHTML += `<td class="${fieldValue}" onclick="handleClick(${index})">${symbol}</td>`;
     }
@@ -36,28 +41,63 @@ function render() {
   tableHTML += '</table>';
 
   contentDiv.innerHTML = tableHTML;
-
-  const currentPlayer = getCurrentPlayer();
-  const currentPlayerDiv = document.getElementById('current-player');
-  currentPlayerDiv.textContent = `Aktueller Spieler: ${currentPlayer}`;
 }
 
 
-function getCurrentPlayer() {
-  return isCircleTurn ? 'Kreis (O)' : 'Kreuz (X)';
+function renderSymbols() {
+  let crossSymbol = document.getElementById('cross');
+  let circleSymbol = document.getElementById('circle');
+  crossSymbol.innerHTML = generateCrossSVG();
+  circleSymbol.innerHTML = generateCircleSVG();
+  if (currentPlayer === 'circle') {
+      crossSymbol.classList.add('inactive');
+      circleSymbol.classList.remove('inactive');
+  } else {
+      crossSymbol.classList.remove('inactive');
+      circleSymbol.classList.add('inactive');
+  }
+}
+
+
+function isGameFinished() {
+  // Überprüfe auf Gewinnbedingungen
+  const winningCombinations = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontale Linien
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertikale Linien
+    [0, 4, 8], [2, 4, 6] // Diagonale Linien
+  ];
+
+  for (const combination of winningCombinations) {
+    const [a, b, c] = combination;
+    if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
+      return true; // Es gibt einen Gewinner
+    }
+  }
+
+  // Überprüfe auf Unentschieden
+  if (fields.every(field => field !== null)) {
+    return true; // Alle Felder sind belegt, das Spiel endet unentschieden
+  }
+
+  return false; // Das Spiel ist noch nicht beendet
 }
 
 
 function handleClick(index) {
-  const fieldValue = fields[index];
-  if (!fieldValue) {
-    fields[index] = isCircleTurn ? 'circle' : 'cross';
-    const symbol = isCircleTurn ? generateCircleSVG(index) : generateCrossSVG(index);
-    const tdElement = document.getElementsByTagName('td')[index];
-    tdElement.innerHTML = symbol;
-    tdElement.onclick = null;
-    isCircleTurn = !isCircleTurn;
-    checkWinningCondition();
+  if (!isGameFinished()) { // Überprüfe, ob das Spiel beendet ist
+    const fieldValue = fields[index];
+    if (!fieldValue) {
+      fields[index] = isCircleTurn ? 'circle' : 'cross';
+      currentPlayer = fields[index];
+      const symbol = isCircleTurn ? generateCircleSVG(index) : generateCrossSVG(index);
+      const tdElement = document.getElementsByTagName('td')[index];
+      tdElement.innerHTML = symbol;
+      tdElement.onclick = null;
+      checkWinningCondition();
+      audio_draw.play();
+      isCircleTurn = !isCircleTurn; // Umschalten des aktuellen Spielers
+      renderSymbols();
+    }
   }
 }
 
@@ -75,7 +115,9 @@ function restartGame() {
     null,
   ];
   render()
+  renderSymbols();
 }
+
 
 function checkWinningCondition() {
   const winningCombinations = [
@@ -88,10 +130,12 @@ function checkWinningCondition() {
     const [a, b, c] = combination;
     if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
       drawWinningLine(combination);
+      audio_end.play();
       break;
     }
   }
 }
+
 
 function drawWinningLine(combination) {
   const [a, b, c] = combination;
@@ -143,8 +187,6 @@ function drawWinningLine(combination) {
 }
 
 
-
-
 function generateCircleSVG() {
   const svg = `
     <svg width="70" height="70">
@@ -171,6 +213,9 @@ function generateCrossSVG() {
   `;
   return svg;
 }
+
+
+
 
 
   

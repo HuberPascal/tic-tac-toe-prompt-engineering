@@ -138,9 +138,14 @@
   transform: translateY(-50%) rotate(-45deg);
 }
 
+.symbolsHeadLine {
+  display: flex;
+  gap: 36px;
+}
 
-
-
+.inactive {
+  opacity: 0.3;
+}
 
 
 
