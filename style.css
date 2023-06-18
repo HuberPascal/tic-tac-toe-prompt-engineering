@@ -1,9 +1,35 @@
-body {
+
+  body {
     background-color: #323232;
     font-family: "Open Sans", sans-serif;
-    margin: 0;
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
   }
+  
+  button {
+    padding: 10px 20px;
+    margin-top: 32px;
+    font-size: 18px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.1s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  
 
   h1 {
     text-align: center;
@@ -27,6 +53,11 @@ body {
     text-align: center;
     font-size: 36px;
     font-weight: bold;
+    cursor: pointer;
+  }
+
+  td:hover {
+    background-color: rgba(255, 255, 255, 0.3);
   }
   
 
@@ -45,4 +76,81 @@ body {
   table tr td:last-child {
     border-right: 0;
   }
+
+
+
+
+
+
+/* Gewinnerzelle */
+.winning-cell {
+  position: relative;
+}
+
+/* Gewinnerhorizontale */
+.winning-line-horizontal.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  width: 105%;
+  height: 6px;
+  background-color: red;
+  transform: translateY(-50%);
+}
+
+/* Gewinnervertikale */
+.winning-line-vertical.active::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 6px;
+  height: 105%;
+  background-color: red;
+  transform: translateX(-50%);
+  margin-right: -3px; /* negative margin-right */
+}
+
+
+/* Gewinnerdiagonal 1 */
+.winning-line-diagonal-1.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -25%;
+  width: 152%;
+  height: 6px;
+  background-color: red;
+  transform-origin: center;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.winning-line-diagonal-2.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -25%;
+  width: 152px;
+  height: 6px;
+  background-color: red;
+  transform-origin: center;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
